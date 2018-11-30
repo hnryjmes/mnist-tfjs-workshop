@@ -36,14 +36,31 @@ function createConvModel() {
  */
 
 function createDenseModel() {
-  // TODO
+  const model = tf.sequential();
+  model.add(tf.layers.flatten({ inputShape: [IMAGE_H, IMAGE_W, 1] }));
+  model.add(tf.layers.dense({ units: 42, activation: "relu" }));
+  model.add(tf.layers.dense({ units: 10, activation: "softmax" }));
+  return model;
 }
 
 /**
  * Train the model with the training data
  */
 async function trainModel() {
-  // TODO
+  MODEL = createDenseModel();
+  MODEL.compile({
+    optimizer: "rmsprop",
+    loss: "categoricalCrossentropy",
+    metrics: ["accuracy"]
+  });
+
+  const trainData = DATA.getTrainData();
+
+  await MODEL.fit(trainData.xs, trainData.labels, {
+    BATCH_SIZE,
+    VALIDATION_SPLIT,
+    epochs: EPOCHS
+  });
 }
 
 function inferModel(data) {
